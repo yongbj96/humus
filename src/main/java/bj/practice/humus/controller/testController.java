@@ -1,4 +1,4 @@
-package bj.practice.humous.controller;
+package bj.practice.humus.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;

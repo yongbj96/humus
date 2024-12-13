@@ -1,4 +1,4 @@
-package bj.practice.humous.redis.controller;
+package bj.practice.humus.redis.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
