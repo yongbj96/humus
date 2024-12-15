@@ -3,10 +3,15 @@ package bj.practice.humus.redis.controller;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.HashOperations;
+import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.SetOperations;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class RedisController {
+	private String redis_key = "keys";
 
 	@Autowired
 	private RedisTemplate<String, String> redis;
@@ -40,7 +46,9 @@ public class RedisController {
 			System.out.println("postHash::list" + list);
 
 			for (HashMap<String, Object> map : list) {
+				SetOperations<String, String> keys = redis.opsForSet();
 				String index = (String) map.get("index");
+				keys.add(redis_key, index);
 				map.remove("index");
 
 				HashOperations<String, String, Object> hash = redis.opsForHash();
@@ -53,7 +61,9 @@ public class RedisController {
 				HashMap<String, Object> map = (HashMap<String, Object>) obj;
 				System.out.println("postHash::map" + map);
 
+				SetOperations<String, String> keys = redis.opsForSet();
 				String index = (String) map.get("index");
+				keys.add(redis_key, index);
 				map.remove("index");
 
 				HashOperations<String, String, Object> hash = redis.opsForHash();
@@ -80,8 +90,24 @@ public class RedisController {
 	public Map<String, Object> getHash() {
 		HashMap<String, Object> resultMap = new HashMap<>();
 		System.out.println("getHashList::");
-		
-		
+
+		SetOperations<String, String> keys_set = redis.opsForSet();
+		Set<String> keys_list = keys_set.members(redis_key);
+		System.out.println(keys_list);
+
+		JSONArray jarr = new JSONArray();
+		for (String key : keys_list) {
+			JSONObject jobj = new JSONObject();
+
+			jobj.put("index", key);
+			jobj.put("name", redis.opsForHash().get(key, "name"));
+			jobj.put("date", redis.opsForHash().get(key, "date"));
+			jobj.put("status", redis.opsForHash().get(key, "status"));
+
+			jarr.add(jobj);
+		}
+
+		resultMap.put("data", jarr);
 		resultMap.put("resultCode", 200);
 		return resultMap;
 	}
@@ -94,9 +120,7 @@ public class RedisController {
 		String index = (String) map.get("index");
 		System.out.println("getHash::" + index);
 
-		HashOperations<String, String, Object> hash = redis.opsForHash();
-
-		resultMap.put("data", hash.entries(index));
+		resultMap.put("data", redis.opsForHash().entries(index));
 		resultMap.put("resultCode", 200);
 		resultMap.put("index", index);
 		return resultMap;

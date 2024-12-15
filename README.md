@@ -37,8 +37,10 @@
         HMGET {key} [field ...]
     ● Hash value 전부출력
         HGETALL
+    ● flushall 초기화
 
 ㅁ redisTemplate (java - redis)
-    ● hash.entries  해당하는 Hash의 Map<String, Object> 출력
-    ● hash.keys     해당하는 Hash의 keys 출력
-    ● hash.values   해당하는 Hash의 Values 출력
+    ● hash.entries      해당하는 Hash의 Map<String, Object> 출력
+    ● hash.keys         해당하는 Hash의 keys 출력
+    ● hash.values       해당하는 Hash의 Values 출력
+    ● hash.randomKey    Hash의 랜덤 Key 출력
